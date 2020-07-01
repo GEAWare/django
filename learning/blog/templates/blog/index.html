@@ -1,0 +1,96 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+    {% if request.user.is_authenticated %}
+        {{ request.user }}
+    {% else %}
+        Homepage
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+{% if request.user.is_authenticated %}
+<div class="container">
+    <hr>
+    <div class="row justify-content-between">
+        <div class="col"><a href="{% url 'account' %}"><em>{{ request.user }}</em></a></div>
+        <div class="col"><a href="{% url 'new_post' %}" class="btn btn-success">share new post</a></div>
+        <div class="col"><a href="{% url 'logout_page' %}"><button class="btn btn-danger">Logout</button></a></div>
+    </div>
+    {% if page %}
+        <hr>
+        <h2 class="text-dark">My posts</h2>
+        {% for post in page.object_list %}
+            <hr>
+            <form action="post_edit" method="POST">
+                {% csrf_token %}
+                <button type="submit" name="post_id" value="{{ post.id }}" class="btn btn-link p-0">
+                    {{ post.title }}
+                </button>
+            </form>
+            <strong>{{ post.author }}</strong> - <em>{{ post.pub_date }}</em>
+            {% if post.image %}
+                <img src="{{ post.image.url }}" alt="#" style="width: 100px; height: auto; max_height: 200px; float: right">
+            {% endif %}
+            <h5>{{ post.content }}</h5>
+        {% endfor %}
+        <hr class="mt-5">
+        <p class="text-center">
+            <a href="?page={{ f_page }}" class="btn btn-dark text-bold">&#8249;&#8249;</a>
+            {% if page.has_previous %}
+                <a href="?page={{ p_page }}" class="btn btn-secondary text-bold">&#8249;</a>
+            {% else %}
+                <a href="?page={{ c_page }}" class="btn btn-secondary text-bold">&#8249;</a>
+            {% endif %}
+
+            {% for p in c_pages %}
+                {% if c_page == p %}
+                    <a href="?page={{ p }}" class="btn btn-info text-bold">{{ p }}</a>
+                {% else %}
+                    <a href="?page={{ p }}" class="btn btn-light text-bold">{{ p }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page.has_next %}
+                <a href="?page={{ n_page }}" class="btn btn-secondary text-bold">&#8250;</a>
+            {% else %}
+                <a href="?page={{ c_page }}" class="btn btn-secondary text-bold">&#8250;</a>
+            {% endif %}
+            <a href="?page={{ l_page }}" class="btn btn-dark text-bold">&#8250;&#8250;</a>
+        </p>
+        <hr>
+    {% else %}
+        <p>posts not exist</p>
+    {% endif %}
+</div>
+{% else %}
+<div class="container">
+    <div class="row justify-content-around">
+        <div class="col">
+            <form action="{% url 'registration' %}" method="POST">
+                {% csrf_token %}
+                <p><h1 class="title text-center">Register</h1></p>
+                <p><input type="text" name="username" class="form-control" placeholder="Username"></p>
+                <p><input type="text" name="first_name" class="form-control" placeholder="First name"></p>
+                <p><input type="text" name="last_name" class="form-control" placeholder="Last name"></p>
+                <p><input type="email" name="email" class="form-control" placeholder="Email"></p>
+                <p><input type="password" name="password1" class="form-control" placeholder="Password"></p>
+                <p><input type="password" name="password2" class="form-control" placeholder="Confirm password"></p>
+                <p class="text-center"><button type="submit" class="btn btn-warning">Sign Up</button></p>
+            </form>
+        </div>
+        <div class="col">
+            <form action="{% url 'login_page' %}" method="POST">
+                {% csrf_token %}
+                <p><h1 class="title text-center">Login</h1></p>
+                <p><input type="text" name="username" class="form-control" placeholder="Username"></p>
+                <p><input type="password" name="password" class="form-control" placeholder="Password"></p>
+                <p class="text-center"><button type="submit" class="btn btn-success">Login</button></p>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

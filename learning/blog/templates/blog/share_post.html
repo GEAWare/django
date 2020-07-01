@@ -1,0 +1,20 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+    {{ request.user }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <br>
+    <a href="{% url 'index' %}"><button class="btn btn-info">Back</button></a>
+    <hr>
+    <form action="{% url 'new_post' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p><input type="text" name="title" class="form-control" placeholder="title"></p>
+        <p><textarea name="content" rows="10" class="form-control" placeholder="content"></textarea></p>
+        <p><input type="file" name="image"></p>
+        <button type="submit" class="btn btn-success">Share</button>
+    </form>
+</div>
+{% endblock %}

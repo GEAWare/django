@@ -1,0 +1,28 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+    {{ request.user }}
+{% endblock %}
+
+{% block content %}
+{% if post_model %}
+<div class="container">
+    <br>
+    <a href="{% url 'index' %}"><button class="btn btn-info">Back</button></a>
+    <hr>
+    <form action="{% url 'post_save' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p><input type="text" name="title" class="form-control" value="{{ post_model.title }}"></p>
+        <p><textarea type="text" rows="10" name="content" class="form-control">{{ post_model.content }}</textarea></p>
+        <p><input type="file" name="image"></p>
+        <input type="hidden" name="post_id" value="{{ post_model.id }}">
+        <button type="submit" class="btn btn-success">Save</button>
+    </form><br>
+    <form action="{% url 'post_delete' %}" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="post_id" value="{{ post_model.id }}">
+        <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
+</div>
+{% endif %}
+{% endblock %}
